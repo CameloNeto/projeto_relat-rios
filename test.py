@@ -1,9 +1,7 @@
 import sqlite3
 from uuid import uuid4
 import json
+import paths
 
-con = sqlite3.connect('database.db')
-cur = con.cursor()
-cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
-print(cur.fetchall())
-con.commit()
+with open(paths.clients_CRUD_path().joinpath("create_clients_table.sql"), 'r', encoding="utf-8") as sql_op:
+    print(sql_op.read())
