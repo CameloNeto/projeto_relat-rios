@@ -1,0 +1,10 @@
+import sqlite3
+from uuid import uuid4
+import httpx
+from keys import DG_TOKEN
+
+con = sqlite3.connect('database.db')
+cur = con.cursor()
+cur.execute("CREATE TABLE IF NOT EXISTS clients (id integer, name text, document_type text check(document_type in ('CPF', 'CNPJ')) not null, document text not null, emails text, facilities text);")
+con.commit()
+
