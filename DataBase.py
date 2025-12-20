@@ -48,10 +48,18 @@ class DataBase:
         :type clients: List[list]
         """
         for client in clients:
-            self.cur.execute("insert into clients values(?,?,?,?,?,?)",([i for i in client]))
+            data = [i for i in client]
+            f = ""
+            count = 0
+            for i in data:
+                count += 1
+                if count == len(data):
+                    f += "?"
+                else:
+                    f += "?,"
+
+            self.cur.execute(f"insert into clients values({f})",(data))
         self.con.commit()
 
 if __name__ == "__main__":
-    database = DataBase()
-    contacts = [111111111, 111111111]
-    database.insert_clients([1, 'nome', 'CPF', '11111111111', 'email@gmail.com', json.dumps(contacts)],[1, 'nome', 'CPF', '11111111111', 'email@gmail.com', json.dumps(contacts)])
+    database = DataBase(create_db=True)
