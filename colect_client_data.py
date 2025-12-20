@@ -42,15 +42,17 @@ async def colect_clients():
     while urlDG:
         request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
         results = request.json().get("results")
-        count = 0
         for client in results:
-            count += 1
             if not database.exists("clients", "id", client.get('id')):
                 facilities = await get_facilities(client.get('document'))
-                database.insert_clients([client.get('id'), client.get('name'), client.get('document_type'), client.get('document'), json.dumps(client.get('emails')), json.dumps(facilities)])
-            if count >= 3:
-                break
-        break
+                database.insert_clients(
+                                        [client.get('id'),
+                                        client.get('name'),
+                                        client.get('document_type'),
+                                        client.get('document'),
+                                        json.dumps(client.get('emails')),
+                                        json.dumps(facilities)]
+                                        )
         urlDG = request.json().get("next")
 
 if __name__ == "__main__":
