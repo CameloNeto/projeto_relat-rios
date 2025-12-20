@@ -2,6 +2,12 @@ import sqlite3
 from uuid import uuid4
 import json
 import paths
+from DataBase import DataBase
 
-with open(paths.clients_CRUD_path().joinpath("create_clients_table.sql"), 'r', encoding="utf-8") as sql_op:
-    print(sql_op.read())
+database = DataBase()
+
+verify = database.cur.execute("SELECT * FROM clients WHERE id = ?", (697,)).fetchone()
+if not verify:
+    database.insert_clients([697, 'cliente teste',"CPF","","",""])
+
+print(verify)

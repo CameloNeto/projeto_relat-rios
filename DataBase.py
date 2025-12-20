@@ -39,7 +39,35 @@ class DataBase:
                 self.cur.execute(createclients_sql.read())
                 self.con.commit()
 
-    def insert_clients(self, *clients:List[list]):
+    def verify_number_data(self, data:Union[str, int, list]) -> int:
+        """
+        Verificar se o dado é um número, caso não seja retorna uma string vazia
+        """
+        if type(data) == int:
+            return data
+        
+        elif type(data) == list:
+            data:list
+            verified_list = []
+            for i in data:
+                if type(i) == int:
+                    verified_list.append(i)
+                elif type(i) == str:
+                    try:
+                        int(i)
+                        verified_list.append(i)
+                    except:
+                        verified_list.append("")
+            return verified_list
+        
+        elif type(data) == str:
+            try:
+                int(data)
+                return data
+            except:
+                return ""
+
+    def insert_clients(self, *clients:List[list], just_numbers:bool=False) -> None:
         """
         Docstring for insert_clients
         
@@ -48,7 +76,7 @@ class DataBase:
         :type clients: List[list]
         """
         for client in clients:
-            data = [i for i in client]
+            data = [self.verify_number_data(i) for i in client]
             f = ""
             count = 0
             for i in data:
@@ -60,6 +88,27 @@ class DataBase:
 
             self.cur.execute(f"insert into clients values({f})",(data))
         self.con.commit()
+
+    def exists(self, table:str, column:str, value:Union[str,int]) -> bool:
+        """
+        Docstring for exists
+
+        :param table: Nome da tabela onde será feita a verificação
+        :type table: str
+
+        :param column: Nome da coluna onde será feita a verificação
+        :type column: str
+
+        :param value: Valor que será verificado
+        :type value: Union[str,int]
+
+        :return: Retorna True se o valor existir na tabela e coluna especificada, caso contrário retorna False
+        :rtype: bool
+        """
+        verify = self.cur.execute(f"SELECT 1 FROM {table} WHERE {column} = ?", (value,)).fetchone()
+        if verify:
+            return True
+        return False
 
 if __name__ == "__main__":
     database = DataBase(create_db=True)
