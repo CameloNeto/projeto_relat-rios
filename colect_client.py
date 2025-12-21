@@ -1,7 +1,6 @@
 import httpx
 import asyncio
 from keys import DG_TOKEN
-from DataBase import DataBase
 import json
 from sqlalchemy import insert, select
 from models.make_session import db_session
@@ -39,9 +38,6 @@ async def colect_clients():
     headersDG = {
             'Authorization':f'Token {DG_TOKEN}'
         }
-
-    database = DataBase()
-
 
     with db_session() as session:
         while urlDG:
