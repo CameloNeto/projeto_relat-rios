@@ -22,7 +22,7 @@ async def get_facilities(document:str) -> List[str]:
         facilities = []
 
         while urlDG:
-            request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
+            request = await httpx.AsyncClient(timeout=240).request("GET", urlDG, headers=headersDG)
             results = request.json().get("results")
             for facility in results:
                 if facility.get('owner') == document:
@@ -43,6 +43,11 @@ async def colect_clients():
         request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
         results = request.json().get("results")
         for client in results:
+            print([client.get('id'),
+                                        client.get('name'),
+                                        client.get('document_type'),
+                                        client.get('document'),
+                                        client.get('emails'),""])
             if not database.exists("clients", "id", client.get('id')):
                 facilities = await get_facilities(client.get('document'))
                 database.insert_clients(

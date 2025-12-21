@@ -67,16 +67,47 @@ class DataBase:
             except:
                 return ""
 
-    def insert_clients(self, *clients:List[list], just_numbers:bool=False) -> None:
+    def insert_clients(self, *clients:List[list]) -> None:
         """
         Docstring for insert_clients
         
         :param clients: 
             Dados dos clientes que serão adicionados, em formato de lista, podem ser adicionados vários clientes, basta inserir mais de uma lista, cuidado com a quantidade de dados a serem inseridos.
         :type clients: List[list]
+           Ordem dos dados deve ser:
+                id: int
+                name: str
+                document_type: str
+                document: str
+                emails: str
+                facilities: List[int]
         """
+        client_data_types = {"id": "integer",
+        "name": 'text',
+        "document_type": "text",
+        "document": 'text',
+        "emails": "List[text]",
+        "facilities": "List[number]"}
+        client_data_types_values = list(client_data_types.values())
+
         for client in clients:
-            data = [self.verify_number_data(i) for i in client]
+            data = []
+            for n, item in enumerate(client):
+                if client_data_types_values[n] == "integer" or client_data_types_values[n] == "number":
+                    verified_number = self.verify_number_data(item)
+                    data.append(verified_number)
+                
+                elif client_data_types_values[n] == "List[number]":
+                    data_list = json.loads(item)
+                    for n, i in enumerate(data_list):
+                        verified_number = self.verify_number_data(i)
+                        data_list[n] = verified_number
+                    data.append(json.dumps(data_list))
+
+                else:
+                    data.append(item)
+            
+            
             f = ""
             count = 0
             for i in data:
@@ -85,7 +116,7 @@ class DataBase:
                     f += "?"
                 else:
                     f += "?,"
-
+            print(f"insert into clients values({f})",(data))
             self.cur.execute(f"insert into clients values({f})",(data))
         self.con.commit()
 
