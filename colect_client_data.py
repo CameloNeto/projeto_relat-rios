@@ -1,9 +1,12 @@
-import sqlite3
 import httpx
 import asyncio
 from keys import DG_TOKEN
 from DataBase import DataBase
 import json
+from sqlalchemy import insert, select
+from models.make_session import db_session
+from models.client import client
+
 
 async def get_facilities(document:str) -> List[str]:
         """
@@ -39,26 +42,27 @@ async def colect_clients():
 
     database = DataBase()
 
-    while urlDG:
-        request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
-        results = request.json().get("results")
-        for client in results:
-            print([client.get('id'),
-                                        client.get('name'),
-                                        client.get('document_type'),
-                                        client.get('document'),
-                                        client.get('emails'),""])
-            if not database.exists("clients", "id", client.get('id')):
-                facilities = await get_facilities(client.get('document'))
-                database.insert_clients(
-                                        [client.get('id'),
-                                        client.get('name'),
-                                        client.get('document_type'),
-                                        client.get('document'),
-                                        json.dumps(client.get('emails')),
-                                        json.dumps(facilities)]
-                                        )
-        urlDG = request.json().get("next")
+
+    with db_session() as session:
+        while urlDG:
+            request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
+            print(request)
+            results = request.json().get("results")
+            print(results)
+            for dg_client in results:
+                
+                client_count = session.query(client).where(client.id == dg_client.get('id')).count()
+                if client_count == 0:
+                    add_client = insert(client).values(
+                    id=dg_client.get("id"),
+                    name=dg_client.get("name"),
+                    document_type=dg_client.get("document_type"),
+                    document=dg_client.get("document")
+                    )
+                    session.execute(add_client)
+                    session.commit()
+
+            urlDG = request.json().get("next")
 
 if __name__ == "__main__":
     asyncio.run(colect_clients())

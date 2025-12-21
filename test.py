@@ -1,13 +1,15 @@
+from pydoc import text
 import sqlite3
 from uuid import uuid4
 import json
 import paths
 from DataBase import DataBase
+from sqlalchemy import select
+from sqlalchemy import text
+from models.make_session import db_session
+from models.client import client
 
-database = DataBase()
+with db_session() as session:
+    search = session.query(client).where(client.id == 1).count()
+    print(search)
 
-verify = database.cur.execute("SELECT * FROM clients WHERE id = ?", (697,)).fetchone()
-if not verify:
-    database.insert_clients([697, 'cliente teste',"CPF","","",""])
-
-print(verify)
