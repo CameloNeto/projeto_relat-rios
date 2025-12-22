@@ -212,4 +212,4 @@ coletar_link.py
 idBoletos.py
 
 #database
-database/*.db
+*.db
