@@ -8,32 +8,7 @@ from models.facility import facility
 from models.client import client
 
 
-async def get_facilities(document:str) -> List[str]:
-        """
-        Docstring for get_facilities
-
-        :return: Retorna uma lista de strings com os números das instalações
-        :rtype: List[tuple]
-        """
-        
-        urlDG = 'https://gestao.dg.energy/api/v1/installations/'
-
-        headersDG = {
-            'Authorization':f'Token {DG_TOKEN}'
-        }
-
-        facilities = []
-
-        while urlDG:
-            request = await httpx.AsyncClient(timeout=240).request("GET", urlDG, headers=headersDG)
-            results = request.json().get("results")
-            for facility in results:
-                if facility.get('owner') == document:
-                    facilities.append(facility.get('number'))
-            urlDG = request.json().get("next")
-        return facilities
-
-async def colect_clients():
+async def colect_facilities():
     urlDG = 'https://gestao.dg.energy/api/v1/installations/'
 
     headersDG = {
@@ -62,4 +37,4 @@ async def colect_clients():
             urlDG = request.json().get("next")
 
 if __name__ == "__main__":
-    asyncio.run(colect_clients())
+    asyncio.run(colect_facilities())
