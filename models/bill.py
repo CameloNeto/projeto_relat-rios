@@ -6,7 +6,7 @@ class bill(Base):
     __tablename__ = "bills"
 
     id: Mapped[Integer] = mapped_column(Integer, primary_key=True)
-    due_: Mapped[String] = mapped_column(String, nullable=True)
+    due_date: Mapped[String] = mapped_column(String, nullable=True)
     payment_status: Mapped[String] = mapped_column(String, nullable=False)
     consumption: Mapped[Float] = mapped_column(Float, nullable=False)
     total_amount_distributor: Mapped[Float] = mapped_column(Float, nullable=False)
