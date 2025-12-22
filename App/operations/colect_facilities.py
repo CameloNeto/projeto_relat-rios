@@ -3,9 +3,9 @@ import asyncio
 from keys import DG_TOKEN
 import json
 from sqlalchemy import insert, select, exists
-from models.make_session import db_session
-from models.facility import facility
-from models.client import client
+from App.models.make_session import db_session
+from App.models.facility import facility
+from App.models.client import client
 
 
 async def colect_facilities():
@@ -18,11 +18,10 @@ async def colect_facilities():
     with db_session() as session:
         while urlDG:
             request = await httpx.AsyncClient(timeout=120).request("GET", urlDG, headers=headersDG)
-            #print(request)
             results = request.json().get("results")
-            #print(results)
+
             for dg_facility in results:
-                #print(dg_facility)
+
                 condition = session.scalar(select(exists().where(facility.number==dg_facility.get("number"))))
                 session.query(client).where(client.document==dg_facility.get("owner")).first()
                 if not condition:
