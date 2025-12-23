@@ -18,29 +18,29 @@ async def delete_facilities():
             request = await httpx.AsyncClient(timeout=120).get(url_DG, headers={
                 'Authorization':f'Token {DG_TOKEN}'
             })
-            print(request)
 
             dg_results = request.json().get("results")
 
             dg_count = len(dg_results)
-            print(f"DG facilities fetched: {dg_count}")
-            db_count = 0
-            init_loop = 0
-
-            
-            while db_count < dg_count:
+            db_loops = 0
+            batch_count = 0
+            while True:
                 db_results = session.execute(select(facility).where(facility.id > last_id).limit(BATCH_SIZE).order_by(facility.id)).scalars().all()
                 for n, db_facility in enumerate(db_results):
-                    print(f"{db_count} |{db_facility.number} {db_facility.id} | {dg_results[db_count+n].get('number')} {db_count+n}")
-                    if db_facility.number == dg_results[db_count+n].get("number"):
+                    last_id+=1
+                    db_loops+=1
+                
+                    if str(db_facility.number) == dg_results[n+BATCH_SIZE*batch_count].get("number"):
                         continue
                     else:
-                        pass
-                        #session.delete(db_facility)
-                        #session.commit()
-                db_count += len(db_results)
-                
-            break
+                        session.delete(db_facility)
+                        session.commit()
+                        break
+
+                if dg_count <= db_loops:
+                    break
+                else:
+                    batch_count += 1
             url_DG = request.json().get("next")
 
 if __name__ == "__main__":
