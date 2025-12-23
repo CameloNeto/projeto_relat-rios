@@ -10,8 +10,9 @@ import os
 async def syncronize_clients():
     if not paths.database().exists():
         raise FileExistsError("O banco de dados não foi criado")
+    await colect_clients()
     processes = []
-    for process in [colect_clients(), colect_emails(), colect_facilities()]:
+    for process in [colect_emails(), colect_facilities()]:
         processes.append(process)
     await asyncio.gather(*processes)
 
