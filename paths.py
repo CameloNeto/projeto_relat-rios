@@ -1,8 +1,10 @@
 from pathlib import Path
 
-def clients_CRUD_path() -> Path:
-    clients_path = Path('./sql/clients/')
-    if clients_path.exists():
-        return clients_path
-    else:
-        raise ModuleNotFoundError("O caminho não foi encontrado")
+def root_path() -> Path:
+    return Path(__file__).parent
+
+def database_dir() -> Path:
+    return root_path().joinpath("App").joinpath("database")
+
+def database() -> Path:
+    return database_dir().joinpath("database.db")
