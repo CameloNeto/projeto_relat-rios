@@ -5,8 +5,8 @@ from App.models.engine import engine
 from pathlib import Path
 from os import mkdir
 
-if not Path("./database/").exists():
-    mkdir("./database")
+if not Path("./App/database/").exists():
+    mkdir("./App/database/")
 
 Base.metadata.create_all(engine)
 

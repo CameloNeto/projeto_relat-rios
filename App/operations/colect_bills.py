@@ -3,9 +3,9 @@ import asyncio
 from keys import DG_TOKEN
 import json
 from sqlalchemy import insert, select, exists
-from models.make_session import db_session
-from models.facility import facility
-from models.bill import bill
+from App.models.make_session import db_session
+from App.models.facility import facility
+from App.models.bill import bill
 
 
 async def colect_bills():
