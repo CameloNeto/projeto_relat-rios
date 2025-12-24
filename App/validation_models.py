@@ -9,5 +9,5 @@ from App.models.bill import bill
 class Client_checker(BaseModel):
     id: int
     name: str
-    document_type: Mapped[str] = mapped_column(String, nullable=False)
-    document: Mapped[str] = mapped_column(String, nullable=False)
+    document_type: str
+    document: str

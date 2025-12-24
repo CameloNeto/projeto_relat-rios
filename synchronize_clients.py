@@ -1,6 +1,6 @@
-from database.operations.colect_clients import colect_clients
-from database.operations.colect_emails import colect_emails
-from database.operations.colect_facilities import colect_facilities
+from App.operations.colect_clients import colect_clients
+from App.operations.colect_emails import colect_emails
+from App.operations.colect_facilities import colect_facilities
 import asyncio
 from pathlib import Path
 import paths

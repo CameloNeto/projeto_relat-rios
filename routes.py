@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException
-from database.models.make_session import db_session
+from App.models.make_session import db_session
 from typing import Union
-from database.functions.documents import transform_document
+from App.functions.documents import transform_document
 from sqlalchemy import select
-from database.models.client import client
-from database.models.email import email
-from database.models.facility import facility
-from database.models.bill import bill
+from App.models.client import client
+from App.models.email import email
+from App.models.facility import facility
+from App.models.bill import bill
 
 
 app = FastAPI()
