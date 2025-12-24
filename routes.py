@@ -1,20 +1,33 @@
 from fastapi import FastAPI, HTTPException
-from App.models.make_session import db_session
+from database.models.make_session import db_session
 from typing import Union
+from database.functions.documents import transform_document
+from sqlalchemy import select
+from database.models.client import client
+from database.models.email import email
+from database.models.facility import facility
+from database.models.bill import bill
+
 
 app = FastAPI()
 
 @app.get("/clients/{document}")
 def get_client(document:Union[str, int]):
     """"""
-    if type(str):
-        document_size = len(document)
-        if document_size not in [11, 14, 18]:
-            """"""
-        else:
-            raise HTTPException(status_code=400, detail="Invalid document format")
-    else:
+    try:
+        document = transform_document(document)
+    except Exception as error:
+        raise HTTPException(status_code=400, detail=f'{error.args}')
+    
+    with db_session() as session:
+        client_found = session.execute(select(client).where(client.document==document)).scalar_one_or_none()
+        
 
+        emails = session.execute(select(email).where(email.client_id==client_found.id)).all()
+        emails = [e[0].email for e in emails]
+        
+        facilities = session.execute(select(facility).where(facility.client_id==client_found.id)).all()
+        facilities = [f[0].number for f in facilities]
 
 @app.get("/bills/{facility_number}")
 def get_bills(facility_number:Union[str, int]):

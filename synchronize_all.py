@@ -1,5 +1,5 @@
 from synchronize_clients import syncronize_clients
-from App.operations.colect_bills import colect_bills
+from database.operations.colect_bills import colect_bills
 import asyncio
 
 def synchronize_all():
