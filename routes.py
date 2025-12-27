@@ -36,8 +36,8 @@ def get_bills(facility_number:Union[str, int]):
     from App.functions.data import clear_punctuation
     facility_number = clear_punctuation(facility_number)
     
-    return ""
+    return facility_number
 
 
 if __name__ == "__main__":
-    print(get_client("358.219.143-53"))
+    print(get_bills("57266582"))
